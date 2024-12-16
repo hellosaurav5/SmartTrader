@@ -113,7 +113,7 @@ if st.button("Predict"):
         nvdq_predictions_rounded = np.round(nvdq_predictions, 2)
 
         # Display NVDA predictions table
-        st.write("NVDA Predicted Prices:")
+        st.write("NVDA Predicted Prices for next 5 business days in USD:")
         nvda_df = pd.DataFrame(nvda_predictions_rounded, columns=['Open', 'High', 'Low', 'Close'], index=[date.strftime('%Y-%m-%d') for date in nvda_future_dates])
         st.dataframe(nvda_df)
 
