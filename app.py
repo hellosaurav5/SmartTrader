@@ -64,35 +64,46 @@ def fetch_and_predict(ticker, model, scaler, end_date, n_days=5):
     return future_dates, np.array(predicted_next_days)
 
 # Function to determine trading actions and calculate net value
-def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_shares=10000, initial_nvdq_shares=100000):
+def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_shares=10000, initial_nvdq_shares=100000, threshold=0.02):
     actions = []
     nvda_shares = initial_nvda_shares
     nvdq_shares = initial_nvdq_shares
-    
+
     for i in range(len(nvda_predictions)):
         open_nvda = nvda_predictions[i][0]
         close_nvda = nvda_predictions[i][3]
         open_nvdq = nvdq_predictions[i][0]
         close_nvdq = nvdq_predictions[i][3]
-        
-        if close_nvda > open_nvda and close_nvdq < open_nvdq:
+
+        # Calculate percentage changes
+        nvda_change = (close_nvda - open_nvda) / open_nvda
+        nvdq_change = (close_nvdq - open_nvdq) / open_nvdq
+
+        if nvda_change > threshold and nvdq_change < -threshold:
+            # BULLISH: Swap all NVDQ shares for NVDA shares
             action = 'BULLISH'
-            nvda_shares += nvdq_shares / open_nvda
+            cash_from_nvdq = nvdq_shares * open_nvdq
+            nvda_shares += cash_from_nvdq / open_nvda
             nvdq_shares = 0
-        elif close_nvda < open_nvda and close_nvdq > open_nvdq:
+        elif nvda_change < -threshold and nvdq_change > threshold:
+            # BEARISH: Swap all NVDA shares for NVDQ shares
             action = 'BEARISH'
-            nvdq_shares += nvda_shares * open_nvdq
+            cash_from_nvda = nvda_shares * open_nvda
+            nvdq_shares += cash_from_nvda / open_nvdq
             nvda_shares = 0
         else:
+            # IDLE: Do nothing
             action = 'IDLE'
-        
+
         actions.append(action)
-    
+
+    # Calculate final net value based on closing prices
     final_value_nvda = nvda_shares * nvda_predictions[-1][3]
     final_value_nvdq = nvdq_shares * nvdq_predictions[-1][3]
     final_value = final_value_nvda + final_value_nvdq
-    
+
     return actions, final_value
+
 
 # Streamlit App Interface
 st.title("SmartTrader Console")
@@ -122,7 +133,7 @@ if st.button("Predict"):
         action_df = pd.DataFrame(actions, index=[date.strftime('%Y-%m-%d') for date in nvda_future_dates], columns=["Action"])
         st.table(action_df)
 
-        st.write(f"Final Net Value after 5 Days: ${final_value:,.2f}")
+        # st.write(f"Final Net Value after 5 Days: ${final_value:,.2f}")
         
     except Exception as e:
         st.error(f"Error: {e}")

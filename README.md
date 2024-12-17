@@ -9,7 +9,7 @@ Welcome to **SmartTrader Console**, a powerful Streamlit application designed to
 | Name                  | Email                        | Student ID   |
 |-----------------------|------------------------------|--------------|
 |   Saurav Kashyap      | saurav@sjsu.edu              | 018205655    |
-|   Meet Hitesh Thakkar | meethitesh.thakkar@sjsu.edu  | 018205656   |
+|   Meet Hitesh Thakkar | meethitesh.thakkar@sjsu.edu  | 017792476   |
 
 ---
 
@@ -58,20 +58,18 @@ Follow these steps to build and run the app locally:
 git clone https://github.com/hellosaurav5/SmartTrader.git
 
 2. Install dependencies using `pip`:
+    ```python
+    pip install requirements.txt
+    ```
 
 3. Run the Streamlit app:
+    ```python
+    streamlit run app.py
+    ```
 
 
 4. Open your browser and navigate to `http://localhost:8501` to interact with the app.
 
----
-
-## Features
-
-- Predicts stock prices (Open, High, Low, Close) for NVDA and NVDQ.
-- Implements a trading strategy based on predicted price movements.
-- Displays trading actions (IDLE, BULLISH, BEARISH) for each business day.
-- Calculates and displays total net equity value after 5 business days.
 
 ---
 
