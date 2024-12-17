@@ -68,54 +68,31 @@ def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_s
     actions = []
     nvda_shares = initial_nvda_shares
     nvdq_shares = initial_nvdq_shares
-
+    
     for i in range(len(nvda_predictions)):
         open_nvda = nvda_predictions[i][0]
         close_nvda = nvda_predictions[i][3]
         open_nvdq = nvdq_predictions[i][0]
         close_nvdq = nvdq_predictions[i][3]
-
-        # Calculate percentage changes
-        nvda_change = (close_nvda - open_nvda) / open_nvda
-        nvdq_change = (close_nvdq - open_nvdq) / open_nvdq
-
-        # Calculate potential net values for each action
-        if open_nvda > 0 and open_nvdq > 0:
-            # Value if IDLE
-            idle_value = (nvda_shares * close_nvda) + (nvdq_shares * close_nvdq)
-            
-            # Value if BULLISH
-            cash_from_nvdq = nvdq_shares * open_nvdq
-            bullish_value = (cash_from_nvdq / open_nvda) * close_nvda + cash_from_nvdq
-            
-            # Value if BEARISH
-            cash_from_nvda = nvda_shares * open_nvda
-            bearish_value = (cash_from_nvda / open_nvdq) * close_nvdq + cash_from_nvda
-            
-            # Determine action based on maximum potential value and threshold
-            if bullish_value > max(idle_value, bearish_value):
-                action = 'BULLISH'
-                nvda_shares += cash_from_nvdq / open_nvda
-                nvdq_shares = 0
-            elif bearish_value > max(idle_value, bullish_value):
-                action = 'BEARISH'
-                nvdq_shares += cash_from_nvda / open_nvdq
-                nvda_shares = 0
-            else:
-                action = 'IDLE'
+        
+        if close_nvda > open_nvda and close_nvdq < open_nvdq:
+            action = 'BULLISH'
+            nvda_shares += nvdq_shares / open_nvda
+            nvdq_shares = 0
+        elif close_nvda < open_nvda and close_nvdq > open_nvdq:
+            action = 'BEARISH'
+            nvdq_shares += nvda_shares * open_nvdq
+            nvda_shares = 0
         else:
             action = 'IDLE'
-
+        
         actions.append(action)
-
-    # Calculate final net value based on closing prices
+    
     final_value_nvda = nvda_shares * nvda_predictions[-1][3]
     final_value_nvdq = nvdq_shares * nvdq_predictions[-1][3]
     final_value = final_value_nvda + final_value_nvdq
-
+    
     return actions, final_value
-
-
 
 # Streamlit App Interface
 st.title("SmartTrader Console")

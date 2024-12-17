@@ -25,14 +25,12 @@ You can access the deployed app at the following URL:
      - **IDLE**: No action is taken.
      - **BULLISH**: Swaps all NVDQ shares for NVDA shares using NVDA's open price.
      - **BEARISH**: Swaps all NVDA shares for NVDQ shares using NVDQ's open price.
-   - At the end of the 5th business day, the app calculates and displays the total net equity value.
 
 2. **How to Use the App**:
    - Select a date using the date picker.
    - Click the "Predict" button to view:
      - Predicted stock prices for NVDA.
      - Trading actions for each business day.
-     - Final net equity value after 5 business days.
 
 3. **Expected Outputs**:
    - A table of predicted NVDA stock prices (Open, High, Low, Close).
@@ -53,12 +51,12 @@ Follow these steps to build and run the app locally:
 git clone https://github.com/hellosaurav5/SmartTrader.git
 
 2. Install dependencies using `pip`:
-    ```python
+    ```
     pip install requirements.txt
     ```
 
 3. Run the Streamlit app:
-    ```python
+    ```
     streamlit run app.py
     ```
 
