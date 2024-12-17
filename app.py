@@ -1,5 +1,3 @@
-# stock_predictor_app.py
-
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -7,13 +5,12 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 import joblib
 
-# Load the trained models and scalers
+# Load the trained Random Forest models and scalers
 nvda_model_path = 'random_forest_nvda.pkl'
 nvdq_model_path = 'random_forest_nvdq.pkl'
 nvda_scaler_path = 'scaler_nvda.pkl'
 nvdq_scaler_path = 'scaler_nvdq.pkl'
 
-# Load the trained Random Forest models and scalers
 nvda_model = joblib.load(nvda_model_path)
 nvdq_model = joblib.load(nvdq_model_path)
 nvda_scaler = joblib.load(nvda_scaler_path)
@@ -30,7 +27,7 @@ def create_lagged_features(data, n_lags=5):
 # Function to fetch historical data and predict future prices
 def fetch_and_predict(ticker, model, scaler, end_date, n_days=5):
     # Fetch historical market data using yfinance
-    start_date = '2019-11-18'  # Fixed start date for training data
+    start_date = '2021-11-18'  # Fixed start date for training data
     data = yf.download(ticker, start=start_date, end=end_date, interval='1d')
     
     # Ensure there is enough data for lagged features
