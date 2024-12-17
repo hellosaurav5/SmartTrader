@@ -17,7 +17,7 @@ Welcome to **SmartTrader Console**, a powerful Streamlit application designed to
 
 You can access the deployed app at the following URL:
 
-👉 **[SmartTrader Console](https://smarttrader-team14-saurav-meet.streamlit.app)**
+👉 **[SmartTrader Console](https://smarttrader-team14-saurav-meet.streamlit.app)** - https://smarttrader-team14-saurav-meet.streamlit.app
 
 1. **App Functionality**:
    - The app predicts stock prices for NVDA and NVDQ for the next 5 business days.
@@ -37,11 +37,6 @@ You can access the deployed app at the following URL:
 3. **Expected Outputs**:
    - A table of predicted NVDA stock prices (Open, High, Low, Close).
    - A table of trading actions (IDLE, BULLISH, BEARISH) for each day.
-   - The final net equity value displayed at the bottom.
-
-4. **Validation**:
-   - Ensure that trading actions follow the rules specified in the problem statement.
-   - Verify that predictions are displayed correctly.
 
 ---
 

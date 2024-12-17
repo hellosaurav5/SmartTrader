@@ -64,7 +64,7 @@ def fetch_and_predict(ticker, model, scaler, end_date, n_days=5):
     return future_dates, np.array(predicted_next_days)
 
 # Function to determine trading actions and calculate net value
-def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_shares=10000, initial_nvdq_shares=100000, threshold=0.02):
+def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_shares=10000, initial_nvdq_shares=100000):
     actions = []
     nvda_shares = initial_nvda_shares
     nvdq_shares = initial_nvdq_shares
@@ -79,20 +79,31 @@ def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_s
         nvda_change = (close_nvda - open_nvda) / open_nvda
         nvdq_change = (close_nvdq - open_nvdq) / open_nvdq
 
-        if nvda_change > threshold and nvdq_change < -threshold:
-            # BULLISH: Swap all NVDQ shares for NVDA shares
-            action = 'BULLISH'
+        # Calculate potential net values for each action
+        if open_nvda > 0 and open_nvdq > 0:
+            # Value if IDLE
+            idle_value = (nvda_shares * close_nvda) + (nvdq_shares * close_nvdq)
+            
+            # Value if BULLISH
             cash_from_nvdq = nvdq_shares * open_nvdq
-            nvda_shares += cash_from_nvdq / open_nvda
-            nvdq_shares = 0
-        elif nvda_change < -threshold and nvdq_change > threshold:
-            # BEARISH: Swap all NVDA shares for NVDQ shares
-            action = 'BEARISH'
+            bullish_value = (cash_from_nvdq / open_nvda) * close_nvda + cash_from_nvdq
+            
+            # Value if BEARISH
             cash_from_nvda = nvda_shares * open_nvda
-            nvdq_shares += cash_from_nvda / open_nvdq
-            nvda_shares = 0
+            bearish_value = (cash_from_nvda / open_nvdq) * close_nvdq + cash_from_nvda
+            
+            # Determine action based on maximum potential value and threshold
+            if bullish_value > max(idle_value, bearish_value):
+                action = 'BULLISH'
+                nvda_shares += cash_from_nvdq / open_nvda
+                nvdq_shares = 0
+            elif bearish_value > max(idle_value, bullish_value):
+                action = 'BEARISH'
+                nvdq_shares += cash_from_nvda / open_nvdq
+                nvda_shares = 0
+            else:
+                action = 'IDLE'
         else:
-            # IDLE: Do nothing
             action = 'IDLE'
 
         actions.append(action)
@@ -103,6 +114,7 @@ def determine_trading_actions(nvda_predictions, nvdq_predictions, initial_nvda_s
     final_value = final_value_nvda + final_value_nvdq
 
     return actions, final_value
+
 
 
 # Streamlit App Interface
